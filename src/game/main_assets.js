@@ -13,6 +13,8 @@ game.addAsset('circle.png');
 game.addAsset('circle-blue2.png');
 game.addAsset('circle-green2.png');
 game.addAsset('best.png');
+game.addAsset('Sick_circle.png');
+game.addAsset('skull.png');
 game.addAsset('icons/heart.png');
 
 game.addAsset('font.fnt');
@@ -30,8 +32,8 @@ game.addAudio('sound/firework/boom4.wav', 'boom4');
 
 game.addAudio('sound/popwood1.wav', 'popwood1');
 game.addAudio('sound/popwood2.wav', 'popwood2');
-game.addAudio('sound/soin.mp3', 'cure');
-game.addAudio('sound/reload.mp3', 'reload');
+game.addAudio('sound/soin.wav', 'cure');
+game.addAudio('sound/reload.wav', 'reload');
 
 game.addAudio('sound/firework/pop1.wav', 'pop1');
 game.addAudio('sound/firework/pop2.wav', 'pop2');

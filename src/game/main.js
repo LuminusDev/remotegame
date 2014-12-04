@@ -106,29 +106,19 @@ game.createScene('Main', {
         this.obj[wallClass.body.id] = wallClass;
 
         // ----------------------------------------------------------------------
-        var i, answerObj;
-        // var happy = ["H","A","P","P","Y"];
-        var happy = ["H"];
-        // happy
-        for (i = 0; i < happy.length; i++) {
-            answerObj = new game.AnswerObject(game.system.width / 2 - 50 + i*100, game.system.height - 20, happy[i]);
-            game.scene.addObject(answerObj);
-            game.scene.obj[answerObj.body.id] = answerObj;
+        var i, sickobj;
+        for (i = 0; i < 2; i++) {
+            sickobj = new game.SickObject(game.system.width / 2 - 180 + i*100, game.system.height + 80);
+            game.scene.addObject(sickobj);
+            game.scene.obj[sickobj.body.id] = sickobj;
         }
-        // var birthday = ["B","I","R","T","H","D","A","Y"];
-        var birthday = ["B"];
-        // happy
-        for (i = 0; i < birthday.length; i++) {
-            answerObj = new game.AnswerObject(game.system.width / 2 - 180 + i*100, game.system.height + 80, birthday[i]);
-            game.scene.addObject(answerObj);
-            game.scene.obj[answerObj.body.id] = answerObj;
-        }
-        this.victoryTotal = happy.length + birthday.length;
+        this.victoryTotal = 200;
         // ----------------------------------------------------------------------
 
         // Object
 
         var doc = new game.DoctorObject(game.system.width /2 + offsetWall, game.system.height / 2 );
+        game.scene.obj[doc.body.id] = doc;
         game.scene.addObject(doc);
 
 
@@ -141,11 +131,9 @@ game.createScene('Main', {
         var alphabet = "HB";
         var alphatab = alphabet.split("");
         this.addTimer(1000, function(){
-            if (game.scene.victoryCurrent !== game.scene.victoryTotal) {
-                var object = new game.PhonemeObject(game.system.width + offsetWall, game.system.height / 2, alphatab[Math.floor(Math.random()*alphatab.length)], "left");
-                game.scene.addObject(object);
-                game.scene.obj[object.body.id] = object;
-            } else {
+            if (game.scene.victoryCurrent === game.scene.victoryTotal) {
+                
+            
                 game.audio.playMusic("musicVictory");
                 game.audio.setMusicVolume(1);
 

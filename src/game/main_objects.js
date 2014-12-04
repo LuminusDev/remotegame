@@ -96,14 +96,14 @@ game.DoctorObject = game.Class.extend({
 	},
 
 	cure: function() {
-	    medic -= 10;
-	    if(medic < 0)
-	    	medic = 0;
+	    this.current_medic -= 10;
+	    if(this.current_medic < 0)
+	    	this.current_medic = 0;
 	},
 
 	reload: function() {
-		medic = max_medic;
-	}
+		current_medic = max_medic;
+	},
 
 	remove: function() {
 	    game.scene.removeObject(this);
@@ -126,8 +126,10 @@ game.DoctorObject = game.Class.extend({
 	},
 
 	contactBegin: function(contactObject) {
+		console.log("that");
 	    if (game.scene.obj[contactObject.id].isSick === true
 	    ) {
+	    	console.log("that2");
 	    	this.cure();
 	        game.audio.playSound("cure");
 	    }
@@ -144,127 +146,7 @@ game.DoctorObject = game.Class.extend({
 	}
 });
 
-game.PhonemeSprite = game.Sprite.extend({
-interactive: true,
-offset: { x: 0, y: 0 },
-attachObject: null,
-text: null,
-letter: null,
-init: function(x, y, bodyAttach, letter) {
-this._super("circle.png", x, y);
-this.createText(x, y, letter);
-this.attachObject = bodyAttach;
-},
-createText: function(x, y, letter) {
-this.letter = letter;
-this.text = new game.BitmapText(this.letter, {font:'HelveticaNeue'});
-this.text.position.set(x, y);
-this.text.pivot = new game.Point(this.text.textWidth/2, this.text.textHeight/2);
-},
-addStage: function(){
-game.scene.stage.addChild(this);
-game.scene.stage.addChild(this.text);
-},
-removeStage: function(){
-if (game.scene.current == this) {
-this.mouseup();
-}
-game.scene.stage.removeChild(this.text);
-game.scene.stage.removeChild(this);
-},
-updatePos: function(x, y, rotation) {
-this.position.x = x;
-this.position.y = y;
-this.rotation = rotation;
-this.text.position.x = x;
-this.text.position.y = y;
-this.text.rotation = rotation;
-},
-click: function(e) {
-game.audio.playSound('catch');
-this.interactive = false;
-this.attachObject.fall();
-}
-});
 
-game.PhonemeObject = game.Class.extend({
-	size: 70,
-	body: null,
-	sprite: null,
-	answerHover: null,
-	cptContact: 0,
-	isPhoneme: true,
-	shape: null,
-
-	init: function(x, y, letter, direction) {
-	    // Add body and shape
-	    this.shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
-	    this.shape.collisionGroup = PHONEME_THROW;
-	    this.shape.collisionMask  = SCENE;
-	    this.body = new game.Body({
-	        mass: 1,
-	        position: [
-	            x / game.scene.world.ratio,
-	            y / game.scene.world.ratio
-	        ],
-	        angularVelocity: 0
-	    });
-	    this.body.addShape(this.shape);
-
-	    // Apply velocity
-	    var force = 4;
-	    var angle = (direction == "left") ? Math.PI + Math.PI / 2 : Math.PI / 2;
-	    this.body.velocity[0] = Math.sin(angle) * force;
-	    this.body.velocity[1] = Math.cos(angle) * force;
-
-	    // Ignore gravity
-	    this.body.gravityScale = 0;
-
-	    this.sprite = new game.PhonemeSprite(x, y, this, letter);
-	    this.sprite.anchor.set(0.5, 0.5);
-
-	    game.scene.addObject(this);
-	    this.sprite.addStage();
-	    game.scene.world.addBody(this.body);
-	},
-
-	fall: function() {
-	    this.body.gravityScale = 1;
-	    var force = 1;
-	    var angle = Math.PI;
-	    this.body.velocity[0] = Math.sin(angle) * force;
-	    this.body.velocity[1] = Math.cos(angle) * force;
-	},
-
-	remove: function() {
-	    game.scene.removeObject(this);
-	    this.sprite.removeStage();
-	    game.scene.world.removeBody(this.body);
-	},
-
-	update: function() {
-	    if (this.body !== null) {
-	        this.sprite.updatePos(
-	            this.body.position[0] * game.scene.world.ratio,
-	            this.body.position[1] * game.scene.world.ratio,
-	            this.body.angle
-	        );
-	    }
-	},
-
-	contactBegin: function(contactObject) {
-	    if (game.scene.obj[contactObject.id].isPhoneme !== "undefined" &&
-	        game.scene.obj[contactObject.id].isPhoneme === true
-	    ) {
-	        var soundName = Math.random() > 0.5 ? "popwood1" : "popwood2";
-	        game.audio.playSound(soundName);
-	    }
-	},
-
-	contactEnd: function(contactObject) {
-	    //nothing
-	}
-});
 
 game.WallObject = game.Class.extend({
 	body: null,
@@ -292,38 +174,26 @@ game.WallObject = game.Class.extend({
 	}
 });
 
-game.AnswerSprite = game.Sprite.extend({
+game.SickSprite = game.Sprite.extend({
 	interactive: true,
 	offset: { x: 0, y: 0 },
 	attachObject: null,
-	text: null,
-	letter: null,
 	active: false,
 	tween: null,
 
-	init: function(x, y, bodyAttach, letter) {
-	    this._super("circle-blue2.png", x, y);
-	    this.createText(x, y, letter);
+	init: function(x, y, bodyAttach) {
+	    this._super("Sick_circle.png", x, y);
 	    this.attachObject = bodyAttach;
-	},
-
-	createText: function(x, y, letter) {
-	    this.letter = letter;
-	    this.text = new game.BitmapText("", {font:'HelveticaNeue'});
-	    this.text.position.set(x, y);
-	    this.text.pivot = new game.Point(this.text.textWidth/2, this.text.textHeight/2);
 	},
 
 	addStage: function(){
 	    game.scene.stage.addChild(this);
-	    game.scene.stage.addChild(this.text);
 	},
 
 	removeStage: function(){
 	    if (game.scene.current == this) {
 	        this.mouseup();
 	    }
-	    game.scene.stage.removeChild(this.text);
 	    game.scene.stage.removeChild(this);
 	},
 
@@ -354,18 +224,65 @@ game.AnswerSprite = game.Sprite.extend({
 	}
 });
 
-game.AnswerObject = game.Class.extend({
+game.DeathSprite = game.Sprite.extend({
+	interactive: true,
+	offset: { x: 0, y: 0 },
+	attachObject: null,
+	active: false,
+	tween: null,
+	init: function(x, y, bodyAttach) {
+	    this._super("skull.png", x, y);
+	    this.attachObject = bodyAttach;
+	},
+
+	addStage: function(){
+	    game.scene.stage.addChild(this);
+	},
+
+	removeStage: function(){
+	    if (game.scene.current == this) {
+	        this.mouseup();
+	    }
+	    game.scene.stage.removeChild(this);
+	},
+
+	updatePos: function(x, y, rotation) {
+	    this.position.x = x;
+	    this.position.y = y;
+	    this.rotation = rotation;
+	},
+
+	createTween: function() {
+	    this.tween = new game.Tween(this.scale);
+	    this.tween.easing(game.Tween.Easing.Back.InOut);
+	},
+
+	click: function(e) {
+	    this.active = !this.active;
+	    this.createTween();
+	    if (this.active) {
+	        this.tween.to({x:1.2, y:1.2}, 300);
+	    } else {
+	        this.tween.to({x:1, y:1}, 300);
+	    }
+	    this.tween.start();
+	}
+})
+
+game.SickObject = game.Class.extend({
 	size: 70,
 	body: null,
 	sprite: null,
 	isFind: false,
+	isSick: true,
+	life: 5,
 
-	init: function(x, y, letter) {
+	init: function(x, y) {
 	    // Add body and shape
 	    var shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
 	    shape.sensor = true;
-	    shape.collisionGroup = ANSWER;
-	    shape.collisionMask  = PHONEME_INGAME;
+	    shape.collisionGroup = PEOPLE;
+	    shape.collisionMask  = PEOPLE | SCENE;
 	    this.body = new game.Body({
 	        position: [
 	            x / game.scene.world.ratio,
@@ -374,23 +291,21 @@ game.AnswerObject = game.Class.extend({
 	    });
 	    this.body.addShape(shape);
 
-	    this.sprite = new game.AnswerSprite(x, y ,this, letter);
+	    this.sprite = new game.SickSprite(x, y ,this);
 	    this.sprite.anchor.set(0.5, 0.5);
+
+	    var my = this;
+	    game.scene.addTimer(1000, function(){
+                    my.life--;
+                    if(my.life==0) {
+                    	game.scene.removeTimer(this);
+                    	my.sickDie(x,y);
+                    }     	
+                }, true);
 
 	    game.scene.addObject(this);
 	    this.sprite.addStage();
 	    game.scene.world.addBody(this.body);
-	},
-
-	find: function(letter) {
-	    if (this.isFind === false &&
-	        this.sprite.letter === letter
-	    ) {
-	        game.scene.victoryCurrent += 1;
-	        this.isFind = true;
-	        return true;
-	    }
-	    return false;
 	},
 
 	remove: function() {
@@ -400,17 +315,12 @@ game.AnswerObject = game.Class.extend({
 	},
 
 	contactBegin: function(contactObject) {
-	    if (game.scene.obj[contactObject.id].sprite !== game.scene.current) {
-	        return;
-	    }
-	    if (game.scene.obj[contactObject.id].answerHover !== null) {
-	        game.scene.obj[contactObject.id].answerHover.sprite.scale.x = 1;
-	        game.scene.obj[contactObject.id].answerHover.sprite.scale.y = 1;
-	        game.scene.obj[contactObject.id].answerHover.sprite.alpha = 1;
+	    if (game.scene.obj[contactObject.id].isMedic === true) {
+	        this.sickCure();
 	    }
 
 	    game.scene.obj[contactObject.id].cptContact += 1;
-	    game.scene.obj[contactObject.id].answerHover = this;
+	    game.scene.obj[contactObject.id].sickhover = this;
 
 	    this.sprite.scale.x = 1.3;
 	    this.sprite.scale.y = 1.3;
@@ -418,18 +328,30 @@ game.AnswerObject = game.Class.extend({
 	},
 
 	contactEnd: function(contactObject) {
-	    if (game.scene.obj[contactObject.id].sprite !== game.scene.current) {
-	        return;
-	    }
-	    game.scene.obj[contactObject.id].cptContact -= 1;
-	    if (game.scene.obj[contactObject.id].cptContact === 0) {
-	        game.scene.obj[contactObject.id].answerHover = null;
-	        this.sprite.scale.x = 1;
-	        this.sprite.scale.y = 1;
-	        this.sprite.alpha = 1;
-	    }
+	    
+	},
+
+	sickDie: function(x, y) {
+		this.sprite.removeStage();
+		this.sprite = new game.DeathSprite(x, y ,this);
+	    this.sprite.anchor.set(0.5, 0.5);
+	    this.sprite.addStage();
+	    var my = this;
+	    game.scene.addTimer(1500, function(){
+            		//mettre un son
+            		game.scene.removeTimer(this);
+            		my.remove();	
+                }, false);
+		
+	},
+
+	sickCure: function() {
+
+		this.remove();
 	}
+
 });
+
 
 game.ButtonSprite = game.Class.extend({
 	spriteInButton: null,
