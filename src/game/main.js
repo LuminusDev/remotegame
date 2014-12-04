@@ -18,6 +18,11 @@ game.createScene('Main', {
     obj: {},
     victoryTotal: 0,
     victoryCurrent: 0,
+    dataSocket: {
+        accx:0,
+        accy:0,
+        action:null
+    },
 
     init: function() {
 
@@ -180,6 +185,27 @@ game.createScene('Main', {
 
         game.audio.playMusic('music');
         game.audio.setMusicVolume(0.7);
+    },
+
+    update: function() {
+        // Check if key is currently down
+        if (game.keyboard.down('UP')) {
+            this.dataSocket.accx += 0.01;
+            console.log('up');
+        }
+        if (game.keyboard.down('DOWN')) {
+            this.dataSocket.accx -= 0.01;
+            console.log('down');
+        }
+        if (game.keyboard.down('LEFT')) {
+            this.dataSocket.accy -= 0.01;
+            console.log('left');
+        }
+        if (game.keyboard.down('RIGHT')) {
+            this.dataSocket.accy += 0.01;
+            console.log('right');
+        }
+        this._super();
     },
 
     mousemove: function(e) {
