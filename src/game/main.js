@@ -127,6 +127,16 @@ game.createScene('Main', {
         // ----------------------------------------------------------------------
 
         // Object
+
+        var doc = new game.DoctorObject(game.system.width /2 + offsetWall, game.system.height / 2 );
+        game.scene.addObject(doc);
+
+
+
+
+
+
+
         // var alphabet = "ARTYIPDHB";
         var alphabet = "HB";
         var alphatab = alphabet.split("");
@@ -190,7 +200,7 @@ game.createScene('Main', {
     update: function() {
         // Check if key is currently down
         if (game.keyboard.down('UP')) {
-            this.dataSocket.accx += 0.01;
+            this.dataSocket.accx += 0.01;            
             console.log('up');
         }
         if (game.keyboard.down('DOWN')) {
@@ -205,6 +215,8 @@ game.createScene('Main', {
             this.dataSocket.accy += 0.01;
             console.log('right');
         }
+
+        
         this._super();
     },
 

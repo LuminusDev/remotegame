@@ -13,37 +13,30 @@ var SCENE          = Math.pow(2,1),
 	PHONEME_INGAME = Math.pow(2,3),
 	OBSTACLE       = Math.pow(2,4),
 	ANSWER         = Math.pow(2,5);
+	PEOPLE		   = Math.pow(2,6);
+	CENTER		   = Math.pow(2,7);
 
-game.PhonemeSprite = game.Sprite.extend({
+
+game.DoctorSprite = game.Sprite.extend({
 	interactive: true,
 	offset: { x: 0, y: 0 },
 	attachObject: null,
 	text: null,
 	letter: null,
 
-	init: function(x, y, bodyAttach, letter) {
-	    this._super("circle.png", x, y);
-	    this.createText(x, y, letter);
+	init: function(x, y, bodyAttach) {
+	    this._super("doctor.png", x, y);
 	    this.attachObject = bodyAttach;
-	},
-
-	createText: function(x, y, letter) {
-	    this.letter = letter;
-	    this.text = new game.BitmapText(this.letter, {font:'HelveticaNeue'});
-	    this.text.position.set(x, y);
-	    this.text.pivot = new game.Point(this.text.textWidth/2, this.text.textHeight/2);
 	},
 
 	addStage: function(){
 	    game.scene.stage.addChild(this);
-	    game.scene.stage.addChild(this.text);
 	},
 
 	removeStage: function(){
 	    if (game.scene.current == this) {
 	        this.mouseup();
 	    }
-	    game.scene.stage.removeChild(this.text);
 	    game.scene.stage.removeChild(this);
 	},
 
@@ -52,16 +45,146 @@ game.PhonemeSprite = game.Sprite.extend({
 	    this.position.y = y;
 	    this.rotation = rotation;
 	    
-	    this.text.position.x = x;
-	    this.text.position.y = y;
-	    this.text.rotation = rotation;
 	},
 
 	click: function(e) {
-	    game.audio.playSound('catch');
-	    this.interactive = false;
-	    this.attachObject.fall();
+	    //Nothing
 	}
+});
+
+
+game.DoctorObject = game.Class.extend({
+	size: 70,
+	body: null,
+	sprite: null,
+	answerHover: null,
+	cptContact: 0,
+	isMedic: true,
+	shape: null,
+	current_medic: 100,
+	max_medic: 100,
+
+	init: function(x, y, direction) {
+	    // Add body and shape
+	    this.shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
+	    this.shape.collisionGroup = PEOPLE;
+	    this.shape.collisionMask  = SCENE | PEOPLE;
+	    this.body = new game.Body({
+	        mass: 1,
+	        position: [
+	            x / game.scene.world.ratio,
+	            y / game.scene.world.ratio
+	        ],
+	        angularVelocity: 0
+	    });
+	    this.body.addShape(this.shape);
+
+	    // Apply velocity
+	    var force = 10;
+	    //var angle = (direction == "left") ? Math.PI + Math.PI / 2 : Math.PI / 2;
+	    //this.body.velocity[0] = Math.sin(angle) * force;
+	    //this.body.velocity[1] = Math.cos(angle) * force;
+
+	    // Ignore gravity
+	    this.body.gravityScale = 0;
+	    this.sprite = new game.DoctorSprite(x, y, this);
+	    this.sprite.anchor.set(0.5, 0.5);
+
+	    game.scene.addObject(this);
+	    this.sprite.addStage();
+	    game.scene.world.addBody(this.body);
+	},
+
+	cure: function() {
+	    medic -= 10;
+	    if(medic < 0)
+	    	medic = 0;
+	},
+
+	reload: function() {
+		medic = max_medic;
+	}
+
+	remove: function() {
+	    game.scene.removeObject(this);
+	    this.sprite.removeStage();
+	    game.scene.world.removeBody(this.body);
+	},
+
+	update: function() {
+	    if (this.body !== null) {
+	    	
+	    	this.body.velocity[0] = game.scene.dataSocket.accy;
+	    	this.body.velocity[1] = -game.scene.dataSocket.accx;
+
+	        this.sprite.updatePos(
+	            this.body.position[0] * game.scene.world.ratio + game.system.delta,
+	            this.body.position[1] * game.scene.world.ratio + game.system.delta,
+	            this.body.angle
+	        );
+	    }
+	},
+
+	contactBegin: function(contactObject) {
+	    if (game.scene.obj[contactObject.id].isSick === true
+	    ) {
+	    	this.cure();
+	        game.audio.playSound("cure");
+	    }
+
+	    if (game.scene.obj[contactObject.id].isCenter === true
+	    ) {
+	    	this.reload();
+	        game.audio.playSound("reload");
+	    }
+	},
+
+	contactEnd: function(contactObject) {
+	    //nothing
+	}
+});
+
+game.PhonemeSprite = game.Sprite.extend({
+interactive: true,
+offset: { x: 0, y: 0 },
+attachObject: null,
+text: null,
+letter: null,
+init: function(x, y, bodyAttach, letter) {
+this._super("circle.png", x, y);
+this.createText(x, y, letter);
+this.attachObject = bodyAttach;
+},
+createText: function(x, y, letter) {
+this.letter = letter;
+this.text = new game.BitmapText(this.letter, {font:'HelveticaNeue'});
+this.text.position.set(x, y);
+this.text.pivot = new game.Point(this.text.textWidth/2, this.text.textHeight/2);
+},
+addStage: function(){
+game.scene.stage.addChild(this);
+game.scene.stage.addChild(this.text);
+},
+removeStage: function(){
+if (game.scene.current == this) {
+this.mouseup();
+}
+game.scene.stage.removeChild(this.text);
+game.scene.stage.removeChild(this);
+},
+updatePos: function(x, y, rotation) {
+this.position.x = x;
+this.position.y = y;
+this.rotation = rotation;
+this.text.position.x = x;
+this.text.position.y = y;
+this.text.rotation = rotation;
+},
+click: function(e) {
+game.audio.playSound('catch');
+this.interactive = false;
+this.attachObject.fall();
+}
 });
 
 game.PhonemeObject = game.Class.extend({

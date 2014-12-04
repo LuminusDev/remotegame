@@ -6,6 +6,7 @@ game.module(
 )
 .body(function() {
 
+game.addAsset('doctor.png');
 game.addAsset('background.png');
 game.addAsset('panda.png');
 game.addAsset('circle.png');
@@ -29,6 +30,8 @@ game.addAudio('sound/firework/boom4.wav', 'boom4');
 
 game.addAudio('sound/popwood1.wav', 'popwood1');
 game.addAudio('sound/popwood2.wav', 'popwood2');
+game.addAudio('sound/soin.mp3', 'cure');
+game.addAudio('sound/reload.mp3', 'reload');
 
 game.addAudio('sound/firework/pop1.wav', 'pop1');
 game.addAudio('sound/firework/pop2.wav', 'pop2');
