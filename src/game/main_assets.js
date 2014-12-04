@@ -16,6 +16,7 @@ game.addAsset('best.png');
 game.addAsset('Sick_circle.png');
 game.addAsset('skull.png');
 game.addAsset('icons/heart.png');
+game.addAsset('center.png');
 
 game.addAsset('font.fnt');
 

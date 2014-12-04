@@ -121,7 +121,10 @@ game.createScene('Main', {
         game.scene.obj[doc.body.id] = doc;
         game.scene.addObject(doc);
 
-
+ 
+ 	var center = new game.CenterObject(offsetCamera + 750, offsetCamera + 450);
+// 	game.scene.obj[center.body.id] = center;
+//         game.scene.addObject(center);
 
 
 

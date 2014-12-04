@@ -474,4 +474,145 @@ game.ButtonSprite = game.Class.extend({
     }
 });
 
+
+	game.CenterSprite = game.Sprite.extend({
+	interactive: true,
+	offset: { x: 0, y: 0 },
+	attachObject: null,
+	text: null,
+	letter: null,
+	isEmpty:true,
+
+	init: function(x, y, bodyAttach, letter) {
+	    this._super("center.png", x, y);
+	    this.createText(x, y, letter);
+	    this.attachObject = bodyAttach;
+	},
+
+	createText: function(x, y, letter) {
+	    this.letter = letter;
+	    this.text = new game.BitmapText(this.letter, {font:'HelveticaNeue'});
+	    this.text.position.set(x, y);
+	    this.text.pivot = new game.Point(this.text.textWidth/2, this.text.textHeight/2);
+	},
+
+	addStage: function(){
+	    game.scene.stage.addChild(this);
+	    game.scene.stage.addChild(this.text);
+	},
+
+	removeStage: function(){
+	    if (game.scene.current == this) {
+	        this.mouseup();
+	    }
+	    game.scene.stage.removeChild(this.text);
+	    game.scene.stage.removeChild(this);
+	},
+
+	createTween: function() {
+	    this.tween = new game.Tween(this.scale);
+	    this.tween.easing(game.Tween.Easing.Back.InOut);
+	},
+
+	updatePos: function(x, y, rotation) {
+	    this.position.x = x;
+	    this.position.y = y;
+	    this.rotation = rotation;
+
+	    
+	    this.text.position.x = x;
+	    this.text.position.y = y;
+	    this.text.rotation = rotation;
+	},
+	update: function(){
+	  console.log("jkhjk");
+	if (this.body !== null && this.isEmpty) {
+	         this.active = !this.active;
+	    this.createTween();
+	    if (this.active) {
+	        this.tween.to({x:1.2, y:1.2}, 300);
+	    } else {
+	        this.tween.to({x:1, y:1}, 300);
+	    }
+	    this.tween.start();
+	    }
+	}
+});
+game.CenterObject = game.Class.extend({
+	size: 70,
+	body: null,
+	sprite: null,
+	answerHover: null,
+	cptContact: 0,
+	isCenter: true,
+	shape: null,
+
+	init: function(x, y, letter, direction) {
+	    // Add body and shape
+	    this.shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
+	    this.shape.collisionGroup = PHONEME_THROW;
+	    this.shape.collisionMask  = SCENE;
+	    this.body = new game.Body({
+	        mass: 1,
+	        position: [
+	            x / game.scene.world.ratio,
+	            y / game.scene.world.ratio
+	        ],
+	        angularVelocity: 0
+	    });
+	    this.body.addShape(this.shape);
+
+	    // Apply velocity
+	    var force = 4;
+	    var angle = 0;
+
+	    // Ignore gravity
+	    this.body.gravityScale = 0;
+
+	    this.sprite = new game.CenterSprite(x, y, this, letter);
+	    this.sprite.anchor.set(0.5, 0.5);
+
+	    game.scene.addObject(this);
+	    this.sprite.addStage();
+	    game.scene.world.addBody(this.body);
+	},
+
+	fall: function() {
+	    this.body.gravityScale = 1;
+	    var force = 1;
+	    var angle = Math.PI;
+	    this.body.velocity[0] = Math.sin(angle) * force;
+	    this.body.velocity[1] = Math.cos(angle) * force;
+	},
+
+	remove: function() {
+	    game.scene.removeObject(this);
+	    this.sprite.removeStage();
+	    game.scene.world.removeBody(this.body);
+	},
+
+	update: function() {
+	    if (this.body !== null) {
+	        this.sprite.updatePos(
+	            this.body.position[0] * game.scene.world.ratio,
+	            this.body.position[1] * game.scene.world.ratio,
+	            this.body.angle
+	        );
+	    }
+	    //this.sprite.
+	},
+
+	contactBegin: function(contactObject) {
+	    if (game.scene.obj[contactObject.id].isMedic) {
+	      console.log("hgjhg");
+	        var soundName = Math.random() > 0.5 ? "popwood1" : "popwood2";
+	        game.audio.playSound(soundName);
+	    }
+	},
+
+	contactEnd: function(contactObject) {
+	    //nothing
+	}
+});
+
 });
