@@ -1,0 +1,6 @@
+1.Il faut sauver les malades symbolisés par des icones rondes de couleur brunâtre.
+2.Il faut sauver TOUS les malades (vous pouvez en perdre trois au maximum mais après on vous enlève votre license et vous rentrez chez vous).
+3.Quand vous sauvez un malade, vous perdez des medicaments, vous ne devez pas oublier d'aller en chercher dans les gros centres.
+4.Quand vous sauvez un malade, vous gagnez des points car votre but dans la vie, c'est d'entrer dans les meilleurs scores et d'ecraser les autres à ce jeux.
+5.Si vous n'avez plus de medicaments vous ne pouvez  plus soigner les malades et donc gagner des points.
+6.Des malades réapparaissent en permanence sur la carte et il meurt de plus en plus vite. A la fin vous serez obligatoirement depassé par le temps qui passe(une veritable leçon de vie en somme)
