@@ -134,7 +134,7 @@ game.createScene('Main', {
             game.system.width / 2 / this.world.ratio,
             0,
             game.system.width * 2 / this.world.ratio,
-            (wallSize +sn) / this.world.ratio
+            (wallSize + sn*2 +120*2 +10) / this.world.ratio
         );
         this.obj[wallClass.body.id] = wallClass;
 
