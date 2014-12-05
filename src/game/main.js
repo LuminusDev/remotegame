@@ -16,6 +16,7 @@ game.createScene('Main', {
     obj: {},
     menu_graphics: [],
     points: 0,
+    remaining_life: 3,
     textPoints: null,
     dataSocket: {
         accx:0,
@@ -64,7 +65,7 @@ game.createScene('Main', {
                 }, true);
 
         
-        
+
         //Ecran menu
         var menu_graphics = {};
 
@@ -82,7 +83,7 @@ game.createScene('Main', {
         this.menu_graphics[1] = sprite;        
 
 
-
+       
       
         
         
@@ -229,7 +230,7 @@ game.createScene('Main', {
 
     launch: function(){ 
         var i, sickobj, a, b, c;
-        var difficult = 0;
+        var difficult = 45;
         for (i = 0; i < 5; i++) {
             a = Math.floor(Math.random() * 9) + 0;
             b = Math.floor(Math.random() * 5) + 0;

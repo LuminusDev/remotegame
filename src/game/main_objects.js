@@ -104,7 +104,6 @@ game.DoctorObject = game.Class.extend({
 
 	contactBegin: function(contactObject) {
 	    if (game.scene.obj[contactObject.id].isSick === true) {
-	    	console.log(this.current_medic);
 	    	if(this.current_medic >= 10){
 	    		this.cure();
 	    		game.scene.obj[contactObject.id].sickCure();
@@ -238,14 +237,20 @@ game.SickObject = game.Class.extend({
 		
 		if(this.isSick) {
 			var sprite = new game.Sprite('skull.png', x,y);
-        sprite.anchor.set(0.5,0.5);
-        game.scene.stage.addChild(sprite);
-    	
-		game.scene.addTimer(1500, function(){
-            		//mettre un son
-            		game.scene.removeTimer(this);
-            		game.scene.stage.removeChild(sprite);	
-                }, false);
+	        sprite.anchor.set(0.5,0.5);
+	        game.scene.stage.addChild(sprite);
+	        game.scene.remaining_life--;
+	       if(game.scene.remaining_life < 0){
+	       		console.log("Game_over");
+	       		//game.gameover
+	       }
+	        
+	    	
+			game.scene.addTimer(1500, function(){
+				//mettre un son
+				game.scene.removeTimer(this);
+				game.scene.stage.removeChild(sprite);	
+			}, false);
 		}
 	},
 
