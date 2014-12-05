@@ -108,7 +108,7 @@ game.DoctorObject = game.Class.extend({
 	    	this.cure();
 	        game.audio.playSound("cure");
 	        this.points += game.scene.obj[contactObject.id].difficult + 1;
-	        console.log(points);
+	        
 	    }
 
 	    if (game.scene.obj[contactObject.id].isCenter === true) {
