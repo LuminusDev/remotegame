@@ -104,7 +104,6 @@ game.DoctorObject = game.Class.extend({
 
 	contactBegin: function(contactObject) {
 	    if (game.scene.obj[contactObject.id].isSick === true) {
-	    	console.log(this.current_medic);
 	    	if(this.current_medic >= 10){
 	    		this.cure();
 	    		game.scene.obj[contactObject.id].sickCure();
@@ -250,6 +249,7 @@ game.SickObject = game.Class.extend({
 	},
 
 	sickCure: function() {
+		game.scene.SavePeople += 1;
 		game.scene.points += this.difficult +1;
 		this.isSick = false;
 		this.remove();

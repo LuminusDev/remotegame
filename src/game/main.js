@@ -17,6 +17,8 @@ game.createScene('Main', {
     menu_graphics: [],
     points: 0,
     textPoints: null,
+    doc: null,
+    SavePeople: 0,
     dataSocket: {
         accx:0,
         accy:0,
@@ -47,23 +49,7 @@ game.createScene('Main', {
         this.stage.addChild(sprite);
 
         sprite = new game.Sprite('panda.png', 10+this.offsetCamera, this.offsetCamera);
-        this.stage.addChild(sprite);
-
-        this.textPoints = new game.BitmapText('Points :' + game.scene.points, {font:'25px HelveticaNeue'});
-        this.textPoints.position.x = this.offsetCamera + 200;
-        this.textPoints.position.y = this.offsetCamera + 20;
-        this.stage.addChild(this.textPoints);
-
-        var my = this
-        game.scene.addTimer(100, function(){
-                    my.stage.removeChild(my.textPoints);
-                    my.textPoints = new game.BitmapText('Points :' + game.scene.points, {font:'25px HelveticaNeue'});
-                    my.textPoints.position.x = my.offsetCamera + 200;
-                    my.textPoints.position.y = my.offsetCamera + 20;
-                    my.stage.addChild(my.textPoints);        
-                }, true);
-
-        
+        this.stage.addChild(sprite);     
         
         //Ecran menu
         var menu_graphics = {};
@@ -95,6 +81,20 @@ game.createScene('Main', {
         for(var i=0;i<game.scene.menu_graphics.length;i++)
             game.scene.stage.removeChild(game.scene.menu_graphics[i]);
         this.launch();
+
+        this.textPoints = new game.BitmapText('Points :' + game.scene.points+'        Vies sauvees :'+game.scene.SavePeople+'        Medicaments :'+this.doc.current_medic, {font:'25px HelveticaNeue'});
+        this.textPoints.position.x = this.offsetCamera + 200;
+        this.textPoints.position.y = this.offsetCamera + 20;
+        this.stage.addChild(this.textPoints);
+
+        var my = this
+        game.scene.addTimer(100, function(){
+                    my.stage.removeChild(my.textPoints);
+                    my.textPoints = new game.BitmapText('Points :' + game.scene.points+'       Vies sauvees :'+game.scene.SavePeople+'        Medicaments :'+my.doc.current_medic, {font:'25px HelveticaNeue'});
+                    my.textPoints.position.x = my.offsetCamera + 200;
+                    my.textPoints.position.y = my.offsetCamera + 20;
+                    my.stage.addChild(my.textPoints);        
+                }, true);
 
         // Add walls
         //left
@@ -257,9 +257,9 @@ game.createScene('Main', {
         game.scene.obj[center.body.id] = center;
         game.scene.addObject(center);
 
-        var doc = new game.DoctorObject(this.offsetCamera + 300, this.offsetCamera + 300);
-        game.scene.obj[doc.body.id] = doc;
-        game.scene.addObject(doc);
+        this.doc = new game.DoctorObject(this.offsetCamera + 300, this.offsetCamera + 300);
+        game.scene.obj[this.doc.body.id] = this.doc;
+        game.scene.addObject(this.doc);
 
 
     }
