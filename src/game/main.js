@@ -126,11 +126,11 @@ game.createScene('Main', {
         this.obj[wallClass.body.id] = wallClass;
 
         // ----------------------------------------------------------------------
-        var i, sickobj, a, b;
+        var i, sickobj, a, b, c;
         var difficult = 0;
         for (i = 0; i < 5; i++) {
             a = Math.floor(Math.random() * 9) + 0;
-            b = Math.floor(Math.random() * 5) + 0
+            b = Math.floor(Math.random() * 5) + 0;
             sickobj = new game.SickObject(game.system.width /4 + a * 100, game.system.height - b*100,difficult);
             game.scene.addObject(sickobj);
             game.scene.obj[sickobj.body.id] = sickobj;
@@ -139,11 +139,14 @@ game.createScene('Main', {
                     if (difficult < 45) {
                         difficult = difficult + 3;
                     };
-                    a = Math.floor(Math.random() * 9) + 0;
-                    b = Math.floor(Math.random() * 5) + 0
-                    sickobj = new game.SickObject(game.system.width /4 + a * 100, game.system.height - b*100,difficult);
-                    game.scene.addObject(sickobj);
-                    game.scene.obj[sickobj.body.id] = sickobj;      
+                    c = Math.floor(Math.random() * 3) + 1
+                    for (i = 0; i < c; i++) {
+                        a = Math.floor(Math.random() * 9) + 0;
+                        b = Math.floor(Math.random() * 5) + 0;
+                        sickobj = new game.SickObject(game.system.width /4 + a * 100, game.system.height - b*100,difficult);
+                        game.scene.addObject(sickobj);
+                        game.scene.obj[sickobj.body.id] = sickobj;
+                    }
                 }, true);
         // ----------------------------------------------------------------------
 

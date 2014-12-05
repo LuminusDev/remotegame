@@ -395,14 +395,17 @@ game.ButtonSprite = game.Class.extend({
     }
 });
 
-
 game.CenterSprite = game.Sprite.extend({
 	offset: { x: 0, y: 0 },
 	attachObject: null,
+	tween1:null,
+	tween2:null,
 
 	init: function(x, y, bodyAttach) {
 	    this._super("center.png", x, y);
 	    this.attachObject = bodyAttach;
+	    this.scale.x = 0.7;
+	    this.scale.y = 0.7;
 	},
 
 	addStage: function(){
@@ -414,15 +417,27 @@ game.CenterSprite = game.Sprite.extend({
 	},
 
 	createTween: function() {
-	    this.tween = new game.Tween(this.scale);
-	    this.tween.easing(game.Tween.Easing.Back.InOut);
+	    this.tween1 = new game.Tween(this.scale);
+	    this.tween1.easing(game.Tween.Easing.Back.InOut);
+	    this.tween2 = new game.Tween(this.scale);
+	    this.tween1.easing(game.Tween.Easing.Back.InOut);
 	},
 
 	updatePos: function(x, y) {
 	    this.position.x = x;
 	    this.position.y = y;
+	},
+	shake: function(time){
+	  var freq = 300;
+	  this.createTween();
+	  this.tween1.to({x:0.9,y:0.9}, freq);
+	  this.tween1.repeat(time/freq);
+	  this.tween2.to({x:0.7,y:0.7}, freq);
+	  this.tween1.chain(this.tween2);
+	  this.tween1.start();
 	}
 });
+
 game.CenterObject = game.Class.extend({
 	size: 70,
 	body: null,
@@ -430,10 +445,11 @@ game.CenterObject = game.Class.extend({
 	isCenter: true,
 	shape: null,
 	isEmpty: true,
+	medoc:100,
 
 	init: function(x, y) {
 	    // Add body and shape
-	    this.shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
+	    this.shape = new game.Circle(this.size / 1 / game.scene.world.ratio);
 	    this.shape.sensor = true;
 	    this.shape.collisionGroup = CENTER;
 	    this.shape.collisionMask  = SCENE | PEOPLE;
@@ -463,21 +479,16 @@ game.CenterObject = game.Class.extend({
 	    game.scene.world.removeBody(this.body);
 	},
 
-	update: function() {
-		// if (this.body !== null && this.isEmpty) {
-		//          this.active = !this.active;
-		//     this.createTween();
-		//     if (this.active) {
-		//         this.tween.to({x:1.2, y:1.2}, 300);
-		//     } else {
-		//         this.tween.to({x:1, y:1}, 300);
-		//     }
-		//     this.tween.start();
-	 //    }
-	},
-
 	contactBegin: function(contactObject) {
-	    if (game.scene.obj[contactObject.id].isMedic) {
+	  var time = 1000;
+	    if (game.scene.obj[contactObject.id].isMedic && this.medoc !== 0) {
+	      	this.medoc = 0;
+	      	this.sprite.shake(time);
+		var me = this;
+		game.scene.addTimer(time,function(){
+			me.medoc = 100;	
+			console.log("jkhjk");
+		},false);
 	        var soundName = Math.random() > 0.5 ? "popwood1" : "popwood2";
 	        game.audio.playSound(soundName);
 	    }
@@ -487,5 +498,4 @@ game.CenterObject = game.Class.extend({
 	    //nothing
 	}
 });
-
 });
