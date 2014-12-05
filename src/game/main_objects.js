@@ -255,6 +255,7 @@ game.SickObject = game.Class.extend({
 	},
 
 	sickCure: function() {
+		game.scene.SavePeople += 1;
 		game.scene.points += this.difficult +1;
 		this.isSick = false;
 		this.remove();
