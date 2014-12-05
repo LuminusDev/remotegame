@@ -6,7 +6,8 @@ game.module(
     'game.main_assets',
     'game.main_objects',
     'plugins.p2',
-    'plugins.fireworks'
+    'plugins.fireworks',
+    'plugins.websocket'
 )
 .body(function(){
 
@@ -17,7 +18,8 @@ game.createScene('Main', {
     dataSocket: {
         accx:0,
         accy:0,
-        action:null
+        action:null,
+        id:null
     },
 
     init: function() {
@@ -152,7 +154,54 @@ game.createScene('Main', {
 
         // game.audio.playMusic('music');
         // game.audio.setMusicVolume(0.7);
+
+        game.websocket.open = this.socketOpen.bind(this);
+        game.websocket.message = this.socketMessage.bind(this);
+        game.websocket.close = this.socketClose.bind(this);
+        game.websocket.connect('ws://localhost:5000');
     },
+
+    showUrl: function(text) {
+        console.log("showurl");
+    },
+
+    doAction: function(){
+        switch(this.dataSocket.action) {
+            case "play": this.playGame(); break;
+            case "resume": this.resumeGame(); break;
+        }
+    },
+
+    playGame: function() {
+
+    },
+
+    resumeGame: function() {
+ 
+    },
+
+    socketOpen: function() {},
+
+    socketMessage: function(message) {
+        var data = JSON.parse(message.data);
+        if (data.id) {
+            this.dataSocket.id = data.id;
+            this.showUrl();
+        } else if (data.dataGame) {
+            this.dataSocket.accx = data.dataGame.accx;
+            this.dataSocket.accy = data.dataGame.accy;
+            this.dataSocket.action = data.dataGame.action || null;
+            this.doAction();
+        } else if (data.mobileClose) {
+            this.showUrl("Connexion perdue");
+        } else {
+            // problem
+        }
+        // game.websocket.send(JSON.stringify({gameover:true}));
+
+    },
+
+    socketClose: function(message) {},
 
     update: function() {
         // Check if key is currently down
