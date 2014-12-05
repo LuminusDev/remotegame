@@ -9,20 +9,12 @@ game.module(
 .body(function(){
 
 var SCENE          = Math.pow(2,1),
-	PHONEME_THROW  = Math.pow(2,2),
-	PHONEME_INGAME = Math.pow(2,3),
-	OBSTACLE       = Math.pow(2,4),
-	ANSWER         = Math.pow(2,5),
-	PEOPLE		   = Math.pow(2,6),
-	CENTER		   = Math.pow(2,7);
-
+	PEOPLE		   = Math.pow(2,2),
+	CENTER		   = Math.pow(2,3);
 
 game.DoctorSprite = game.Sprite.extend({
-	interactive: true,
 	offset: { x: 0, y: 0 },
 	attachObject: null,
-	text: null,
-	letter: null,
 
 	init: function(x, y, bodyAttach) {
 	    this._super("doctor.png", x, y);
@@ -34,21 +26,12 @@ game.DoctorSprite = game.Sprite.extend({
 	},
 
 	removeStage: function(){
-	    if (game.scene.current == this) {
-	        this.mouseup();
-	    }
 	    game.scene.stage.removeChild(this);
 	},
 
-	updatePos: function(x, y, rotation) {
+	updatePos: function(x, y) {
 	    this.position.x = x;
 	    this.position.y = y;
-	    this.rotation = rotation;
-	    
-	},
-
-	click: function(e) {
-	    //Nothing
 	}
 });
 
@@ -57,8 +40,6 @@ game.DoctorObject = game.Class.extend({
 	size: 70,
 	body: null,
 	sprite: null,
-	answerHover: null,
-	cptContact: 0,
 	isMedic: true,
 	shape: null,
 	current_medic: 100,
@@ -79,13 +60,9 @@ game.DoctorObject = game.Class.extend({
 	    });
 	    this.body.addShape(this.shape);
 
-	    // Apply velocity
-	    var force = 10;
-	    //var angle = (direction == "left") ? Math.PI + Math.PI / 2 : Math.PI / 2;
-	    //this.body.velocity[0] = Math.sin(angle) * force;
-	    //this.body.velocity[1] = Math.cos(angle) * force;
-
 	    // Ignore gravity
+	    this.body.velocity[0] = 0;
+	    this.body.velocity[1] = 0;
 	    this.body.gravityScale = 0;
 	    this.sprite = new game.DoctorSprite(x, y, this);
 	    this.sprite.anchor.set(0.5, 0.5);
@@ -97,12 +74,13 @@ game.DoctorObject = game.Class.extend({
 
 	cure: function() {
 	    this.current_medic -= 10;
-	    if(this.current_medic < 0)
+	    if(this.current_medic < 0) {
 	    	this.current_medic = 0;
+	    }
 	},
 
 	reload: function() {
-		current_medic = max_medic;
+		this.current_medic = this.max_medic;
 	},
 
 	remove: function() {
@@ -114,28 +92,25 @@ game.DoctorObject = game.Class.extend({
 	update: function() {
 	    if (this.body !== null) {
 	    	
-	    	this.body.velocity[0] = game.scene.dataSocket.accy;
-	    	this.body.velocity[1] = -game.scene.dataSocket.accx;
+	    	this.body.velocity[0] =  game.scene.dataSocket.accy * game.system.delta *400;
+	    	this.body.velocity[1] = -game.scene.dataSocket.accx * game.system.delta *400;
 
 	        this.sprite.updatePos(
-	            this.body.position[0] * game.scene.world.ratio + game.system.delta,
-	            this.body.position[1] * game.scene.world.ratio + game.system.delta,
-	            this.body.angle
+	            this.body.position[0] * game.scene.world.ratio,
+	            this.body.position[1] * game.scene.world.ratio
 	        );
 	    }
 	},
 
 	contactBegin: function(contactObject) {
 		console.log("that");
-	    if (game.scene.obj[contactObject.id].isSick === true
-	    ) {
+	    if (game.scene.obj[contactObject.id].isSick === true) {
 	    	console.log("that2");
 	    	this.cure();
 	        game.audio.playSound("cure");
 	    }
 
-	    if (game.scene.obj[contactObject.id].isCenter === true
-	    ) {
+	    if (game.scene.obj[contactObject.id].isCenter === true) {
 	    	this.reload();
 	        game.audio.playSound("reload");
 	    }
@@ -156,27 +131,24 @@ game.WallObject = game.Class.extend({
 	    wallShape.collisionGroup = SCENE;
 	    wallShape.collisionMask  = PEOPLE;
 	    this.body = new game.Body({
-	      	mass:1,
 	        position: [x, y]
 	    });
-	    this.body.damping = 1;
+	    this.body.gravityScale = 0;
 	    this.body.addShape(wallShape);
 	    game.scene.world.addBody(this.body);
+	    var sprite = new game.Graphics();
+        sprite.beginFill(0xb9bec7);
+        sprite.drawRect(x*game.scene.world.ratio,y*game.scene.world.ratio,w*game.scene.world.ratio,h*game.scene.world.ratio);
+        game.scene.stage.addChild(sprite);
 	},
 
-	contactBegin: function(contactObject) {
-	},
-
-	contactEnd: function(contactObject) {
-	    //nothing
-	}
+	contactBegin: function(contactObject) {},
+	contactEnd: function(contactObject) {}
 });
 
 game.SickSprite = game.Sprite.extend({
-	interactive: true,
 	offset: { x: 0, y: 0 },
 	attachObject: null,
-	active: false,
 	tween: null,
 
 	init: function(x, y, bodyAttach) {
@@ -189,9 +161,6 @@ game.SickSprite = game.Sprite.extend({
 	},
 
 	removeStage: function(){
-	    if (game.scene.current == this) {
-	        this.mouseup();
-	    }
 	    game.scene.stage.removeChild(this);
 	},
 
@@ -199,73 +168,13 @@ game.SickSprite = game.Sprite.extend({
 	    this.position.x = x;
 	    this.position.y = y;
 	    this.rotation = rotation;
-	    
-	    this.text.position.x = x;
-	    this.text.position.y = y;
-	    this.text.rotation = rotation;
 	},
 
 	createTween: function() {
 	    this.tween = new game.Tween(this.scale);
 	    this.tween.easing(game.Tween.Easing.Back.InOut);
-	},
-
-	click: function(e) {
-	    this.active = !this.active;
-	    this.createTween();
-	    if (this.active) {
-	        this.tween.to({x:1.2, y:1.2}, 300);
-	    } else {
-	        this.tween.to({x:1, y:1}, 300);
-	    }
-	    this.tween.start();
 	}
 });
-
-game.DeathSprite = game.Sprite.extend({
-	interactive: true,
-	offset: { x: 0, y: 0 },
-	attachObject: null,
-	active: false,
-	tween: null,
-	init: function(x, y, bodyAttach) {
-	    this._super("skull.png", x, y);
-	    this.attachObject = bodyAttach;
-	},
-
-	addStage: function(){
-	    game.scene.stage.addChild(this);
-	},
-
-	removeStage: function(){
-	    if (game.scene.current == this) {
-	        this.mouseup();
-	    }
-	    game.scene.stage.removeChild(this);
-	},
-
-	updatePos: function(x, y, rotation) {
-	    this.position.x = x;
-	    this.position.y = y;
-	    this.rotation = rotation;
-	},
-
-	createTween: function() {
-	    this.tween = new game.Tween(this.scale);
-	    this.tween.easing(game.Tween.Easing.Back.InOut);
-	},
-
-	click: function(e) {
-	    this.active = !this.active;
-	    this.createTween();
-	    if (this.active) {
-	        this.tween.to({x:1.2, y:1.2}, 300);
-	    } else {
-	        this.tween.to({x:1, y:1}, 300);
-	    }
-	    this.tween.start();
-	}
-})
 
 game.SickObject = game.Class.extend({
 	size: 70,
@@ -330,21 +239,17 @@ game.SickObject = game.Class.extend({
 	},
 
 	sickDie: function(x, y) {
-		this.sprite.removeStage();
-		this.sprite = new game.DeathSprite(x, y ,this);
-	    this.sprite.anchor.set(0.5, 0.5);
-	    this.sprite.addStage();
+	    this.sprite.setTexture('skull.png');
 	    var my = this;
 	    game.scene.addTimer(1500, function(){
-            		//mettre un son
-            		game.scene.removeTimer(this);
-            		my.remove();	
-                }, false);
+    		//mettre un son
+    		game.scene.removeTimer(this);
+    		my.remove();	
+        }, false);
 		
 	},
 
 	sickCure: function() {
-
 		this.remove();
 	}
 
@@ -473,37 +378,20 @@ game.ButtonSprite = game.Class.extend({
 });
 
 
-	game.CenterSprite = game.Sprite.extend({
-	interactive: true,
+game.CenterSprite = game.Sprite.extend({
 	offset: { x: 0, y: 0 },
 	attachObject: null,
-	text: null,
-	letter: null,
-	isEmpty:true,
 
-	init: function(x, y, bodyAttach, letter) {
+	init: function(x, y, bodyAttach) {
 	    this._super("center.png", x, y);
-	    this.createText(x, y, letter);
 	    this.attachObject = bodyAttach;
-	},
-
-	createText: function(x, y, letter) {
-	    this.letter = letter;
-	    this.text = new game.BitmapText(this.letter, {font:'HelveticaNeue'});
-	    this.text.position.set(x, y);
-	    this.text.pivot = new game.Point(this.text.textWidth/2, this.text.textHeight/2);
 	},
 
 	addStage: function(){
 	    game.scene.stage.addChild(this);
-	    game.scene.stage.addChild(this.text);
 	},
 
 	removeStage: function(){
-	    if (game.scene.current == this) {
-	        this.mouseup();
-	    }
-	    game.scene.stage.removeChild(this.text);
 	    game.scene.stage.removeChild(this);
 	},
 
@@ -512,46 +400,26 @@ game.ButtonSprite = game.Class.extend({
 	    this.tween.easing(game.Tween.Easing.Back.InOut);
 	},
 
-	updatePos: function(x, y, rotation) {
+	updatePos: function(x, y) {
 	    this.position.x = x;
 	    this.position.y = y;
-	    this.rotation = rotation;
-
-	    
-	    this.text.position.x = x;
-	    this.text.position.y = y;
-	    this.text.rotation = rotation;
-	},
-	update: function(){
-	  console.log("jkhjk");
-	if (this.body !== null && this.isEmpty) {
-	         this.active = !this.active;
-	    this.createTween();
-	    if (this.active) {
-	        this.tween.to({x:1.2, y:1.2}, 300);
-	    } else {
-	        this.tween.to({x:1, y:1}, 300);
-	    }
-	    this.tween.start();
-	    }
 	}
 });
 game.CenterObject = game.Class.extend({
 	size: 70,
 	body: null,
 	sprite: null,
-	answerHover: null,
-	cptContact: 0,
 	isCenter: true,
 	shape: null,
+	isEmpty: true,
 
-	init: function(x, y, letter, direction) {
+	init: function(x, y) {
 	    // Add body and shape
 	    this.shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
+	    this.shape.sensor = true;
 	    this.shape.collisionGroup = CENTER;
 	    this.shape.collisionMask  = SCENE | PEOPLE;
 	    this.body = new game.Body({
-	        mass: 1,
 	        position: [
 	            x / game.scene.world.ratio,
 	            y / game.scene.world.ratio
@@ -560,29 +428,15 @@ game.CenterObject = game.Class.extend({
 	    });
 	    this.body.addShape(this.shape);
 
-	    // Apply velocity
-	    var force = 4;
-// 	    var angle = (direction == "left") ? Math.PI + Math.PI / 2 : Math.PI / 2;
-// 	    this.body.velocity[0] = Math.sin(angle) * force;
-// 	    this.body.velocity[1] = Math.cos(angle) * force;
-
 	    // Ignore gravity
 	    this.body.gravityScale = 0;
 
-	    this.sprite = new game.CenterSprite(x, y, this, letter);
+	    this.sprite = new game.CenterSprite(x, y, this);
 	    this.sprite.anchor.set(0.5, 0.5);
 
 	    game.scene.addObject(this);
 	    this.sprite.addStage();
 	    game.scene.world.addBody(this.body);
-	},
-
-	fall: function() {
-	    this.body.gravityScale = 1;
-	    var force = 1;
-	    var angle = Math.PI;
-	    this.body.velocity[0] = Math.sin(angle) * force;
-	    this.body.velocity[1] = Math.cos(angle) * force;
 	},
 
 	remove: function() {
@@ -592,14 +446,16 @@ game.CenterObject = game.Class.extend({
 	},
 
 	update: function() {
-	    if (this.body !== null) {
-	        this.sprite.updatePos(
-	            this.body.position[0] * game.scene.world.ratio,
-	            this.body.position[1] * game.scene.world.ratio,
-	            this.body.angle
-	        );
-	    }
-	    //this.sprite.
+		// if (this.body !== null && this.isEmpty) {
+		//          this.active = !this.active;
+		//     this.createTween();
+		//     if (this.active) {
+		//         this.tween.to({x:1.2, y:1.2}, 300);
+		//     } else {
+		//         this.tween.to({x:1, y:1}, 300);
+		//     }
+		//     this.tween.start();
+	 //    }
 	},
 
 	contactBegin: function(contactObject) {
