@@ -14,7 +14,6 @@ game.createScene('Main', {
     backgroundColor: 0xeeeeee,
     obj: {},
     menu_graphics: [],
-    menu_boutton: [],
     dataSocket: {
         accx:0,
         accy:0,
@@ -61,11 +60,10 @@ game.createScene('Main', {
         
 
         //Ecran menu
-        var menu_boutton = {};
         var menu_graphics = {};
 
         sprite = new game.Graphics();
-        sprite.beginFill(0xb9bea7);
+        sprite.beginFill(0x6ebac7);
         sprite.drawRect(offsetCamera + 200, offsetCamera + 200, 600, 300);
         this.stage.addChild(sprite);
         this.menu_graphics[0] = sprite;
@@ -79,22 +77,11 @@ game.createScene('Main', {
 
 
 
-        sprite = new game.ButtonSprite("  Jouer   ", offsetCamera+300, offsetCamera+500);
-         sprite.onReady(function (){
-            console.log("e");
-            for(var i=0;i<game.scene.menu_boutton.length;i++)
-                game.scene.menu_boutton[i].removeStage();
-            
-            for(var i=0;i<game.scene.menu_graphics.length;i++)
-                game.scene.stage.removeChild(game.scene.menu_graphics[i]);
-            
-        });
-        sprite.addStage();
-        this.menu_boutton[0] = sprite;
+        //Fonction call par le socket
+        /*for(var i=0;i<game.scene.menu_graphics.length;i++)
+            game.scene.stage.removeChild(game.scene.menu_graphics[i]);*/
 
-        sprite = new game.ButtonSprite(" Quitter  ", offsetCamera+550, offsetCamera+500);
-        sprite.addStage();
-        this.menu_boutton[1] = sprite;
+        
 
         // Init world
         this.world = new game.World({gravity: [0, 5]});

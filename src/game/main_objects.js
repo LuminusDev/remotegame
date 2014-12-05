@@ -44,6 +44,7 @@ game.DoctorObject = game.Class.extend({
 	shape: null,
 	current_medic: 100,
 	max_medic: 100,
+	points: 0,
 
 	init: function(x, y, direction) {
 	    // Add body and shape
@@ -106,6 +107,8 @@ game.DoctorObject = game.Class.extend({
 	    if (game.scene.obj[contactObject.id].isSick === true) {
 	    	this.cure();
 	        game.audio.playSound("cure");
+	        this.points += game.scene.obj[contactObject.id].difficult + 1;
+	        console.log(points);
 	    }
 
 	    if (game.scene.obj[contactObject.id].isCenter === true) {
