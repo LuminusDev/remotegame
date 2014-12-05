@@ -12,12 +12,7 @@ game.module(
 
 game.createScene('Main', {
     backgroundColor: 0xeeeeee,
-    current: null,
-    mouseConstraint: null,
-    nullBody: new game.Body({}),
     obj: {},
-    victoryTotal: 0,
-    victoryCurrent: 0,
     dataSocket: {
         accx:0,
         accy:0,
@@ -70,27 +65,28 @@ game.createScene('Main', {
 
         // Add walls
         //left
+        var sn=35;
         wallClass = new game.WallObject(
-            0, 
-            game.system.height / 2 / this.world.ratio,
-            wallSize / this.world.ratio,
-            game.system.height * 2 / this.world.ratio
+            0,
+            0,
+            (wallSize + sn*2) / this.world.ratio,
+            game.system.height * 5 / this.world.ratio
         );
         this.obj[wallClass.body.id] = wallClass;
 
         //right
         wallClass = new game.WallObject(
-            (game.system.width + offsetCamera * 2) / this.world.ratio,
-            game.system.height / 2 / this.world.ratio,
-            wallSize / this.world.ratio,
-            game.system.height * 2 / this.world.ratio
+            (game.system.width + offsetCamera + offsetWall) / this.world.ratio,
+            0,
+            (wallSize - sn) / this.world.ratio,
+            game.system.height * 5 / this.world.ratio
         );
         this.obj[wallClass.body.id] = wallClass;
 
         //bottom
         wallClass = new game.WallObject(
-            game.system.width / 2 / this.world.ratio,
-            (game.system.height + offsetCamera * 2) / this.world.ratio,
+            game.system.width / this.world.ratio,
+            (game.system.height + offsetCamera * 2 - sn) / this.world.ratio,
             game.system.width * 2 / this.world.ratio,
             wallSize / this.world.ratio
         );
@@ -101,7 +97,7 @@ game.createScene('Main', {
             game.system.width / 2 / this.world.ratio,
             0,
             game.system.width * 2 / this.world.ratio,
-            wallSize / this.world.ratio
+            (wallSize +sn) / this.world.ratio
         );
         this.obj[wallClass.body.id] = wallClass;
 
@@ -112,52 +108,16 @@ game.createScene('Main', {
             game.scene.addObject(sickobj);
             game.scene.obj[sickobj.body.id] = sickobj;
         }
-        this.victoryTotal = 200;
         // ----------------------------------------------------------------------
 
         // Object
-	var center = new game.CenterObject(offsetCamera + 750, offsetCamera + 450);
- 	game.scene.obj[center.body.id] = center;
+    	var center = new game.CenterObject(offsetCamera + 750, offsetCamera + 450);
+     	game.scene.obj[center.body.id] = center;
         game.scene.addObject(center);
 
-
-        var doc = new game.DoctorObject(game.system.width /2 + offsetWall, game.system.height / 2 );
+        var doc = new game.DoctorObject(offsetCamera + 300, offsetCamera + 300);
         game.scene.obj[doc.body.id] = doc;
         game.scene.addObject(doc);
-
-        // var alphabet = "ARTYIPDHB";
-        var alphabet = "HB";
-        var alphatab = alphabet.split("");
-        this.addTimer(1000, function(){
-            if (game.scene.victoryCurrent === game.scene.victoryTotal) {
-                
-            
-                game.audio.playMusic("musicVictory");
-                game.audio.setMusicVolume(1);
-
-                var fireworks = new game.Fireworks();
-
-                var sprite = new game.Sprite('best.png', game.system.width / 2 + offsetCamera, game.system.height / 2);
-                sprite.anchor.set(0.5,0.5);
-                game.scene.stage.addChild(sprite);
-
-                var tween = new game.Tween(sprite.scale);
-                tween.to({x:1.3, y:1.3}, 4000);
-                tween.easing(game.Tween.Easing.Back.InOut);
-                tween.repeat();
-                tween.yoyo();
-                tween.start();
-
-                game.scene.removeTimer(this);
-
-                game.scene.addTimer(5000, function(){
-                    var sprite = new game.BitmapText("J'ai pas eu le temps, ni les talents\npour ajouter le dinosaure, sorry :'(", {font:'25px HelveticaNeue'});
-                    sprite.position.x = game.system.width / 2 - sprite.textWidth / 2 + offsetCamera;
-                    sprite.position.y = game.system.height / 2 - sprite.textHeight / 2 + offsetCamera + 120;
-                    game.scene.stage.addChild(sprite);
-                }, false);
-            }
-        }, true);
 
         this.world.on('beginContact', function(event){
             game.scene.obj[event.bodyA.id].contactBegin(event.bodyB);
@@ -177,10 +137,10 @@ game.createScene('Main', {
         this.camera.addTo(this.stage);
         this.camera.offset.x = game.system.width / 2 - offsetCamera;
         this.camera.offset.y = game.system.height / 2 - offsetCamera;
-        this.camera.acceleration = 50;
+        this.camera.acceleration = 100;
 
-        game.audio.playMusic('music');
-        game.audio.setMusicVolume(0.7);
+        // game.audio.playMusic('music');
+        // game.audio.setMusicVolume(0.7);
     },
 
     update: function() {
@@ -204,18 +164,6 @@ game.createScene('Main', {
 
         
         this._super();
-    },
-
-    mousemove: function(e) {
-        if(this.mouseConstraint){
-            var physicsPosition = [
-                (e.global.x + this.current.offset.x) / game.scene.world.ratio,
-                (e.global.y + this.current.offset.y) / game.scene.world.ratio
-            ];
-            p2.vec2.copy(this.mouseConstraint.pivotA, physicsPosition);
-            this.mouseConstraint.bodyA.wakeUp();
-            this.mouseConstraint.bodyB.wakeUp();
-        }
     }
 });
 
