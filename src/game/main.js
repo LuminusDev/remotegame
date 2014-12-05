@@ -50,16 +50,16 @@ game.createScene('Main', {
         this.stage.addChild(sprite);
 
         this.textPoints = new game.BitmapText('Points :' + game.scene.points, {font:'25px HelveticaNeue'});
-        this.textPoints.position.x = offsetCamera + 200;
-        this.textPoints.position.y = offsetCamera + 20;
+        this.textPoints.position.x = this.offsetCamera + 200;
+        this.textPoints.position.y = this.offsetCamera + 20;
         this.stage.addChild(this.textPoints);
 
         var my = this
         game.scene.addTimer(100, function(){
                     my.stage.removeChild(my.textPoints);
                     my.textPoints = new game.BitmapText('Points :' + game.scene.points, {font:'25px HelveticaNeue'});
-                    my.textPoints.position.x = offsetCamera + 200;
-                    my.textPoints.position.y = offsetCamera + 20;
+                    my.textPoints.position.x = my.offsetCamera + 200;
+                    my.textPoints.position.y = my.offsetCamera + 20;
                     my.stage.addChild(my.textPoints);        
                 }, true);
 
