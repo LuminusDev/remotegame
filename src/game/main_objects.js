@@ -42,8 +42,8 @@ game.DoctorObject = game.Class.extend({
 	sprite: null,
 	isMedic: true,
 	shape: null,
-	current_medic: 100,
-	max_medic: 100,
+	current_medic: 50,
+	max_medic: 50,
 
 	init: function(x, y, direction) {
 	    // Add body and shape
@@ -240,8 +240,9 @@ game.SickObject = game.Class.extend({
 	        sprite.anchor.set(0.5,0.5);
 	        game.scene.stage.addChild(sprite);
 	        game.scene.remaining_life--;
-	       if(game.scene.remaining_life < 0){
-	       		console.log("Game_over");
+	       if(game.scene.remaining_life <= 0){
+	       		game.scene.remaining_life = 0;
+	       		game.scene.gameover();
 	       		//game.gameover
 	       }
 	        
@@ -488,8 +489,8 @@ game.CenterObject = game.Class.extend({
 			},false);
 		        var soundName = Math.random() > 0.5 ? "popwood1" : "popwood2";
 		        game.audio.playSound(soundName);
-		}
-		
+		} 
+
 	},
 
 	contactEnd: function(contactObject) {

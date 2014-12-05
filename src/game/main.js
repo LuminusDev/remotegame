@@ -70,16 +70,7 @@ game.createScene('Main', {
 
         this.menu_graphics[1] = sprite;        
 
-	game.scene.addTimer(100, function(){
-	  if (game.isOver){
-	    my.textGameOver = new game.BitmapText('GAME OVER\nPour gagner aidez-nous envoyez vos dons', {font:'25px HelveticaNeue'});
-	    my.textGameOver.position.x = game.system.width/2 ;
-	      my.textGameOver.position.y = game.system.width/2 ;
-	    my.stage.addChild(my.textGameOver);
-	    game.system.pause();
-	  }
-	  },true);
-       
+	
       
         
         
@@ -242,7 +233,7 @@ game.createScene('Main', {
 
     launch: function(){ 
         var i, sickobj, a, b, c;
-        var difficult = 45;
+        var difficult = 0;
         for (i = 0; i < 5; i++) {
             a = Math.floor(Math.random() * 9) + 0;
             b = Math.floor(Math.random() * 5) + 0;
@@ -275,6 +266,14 @@ game.createScene('Main', {
         game.scene.addObject(this.doc);
 
 
+    },
+
+    gameover: function(){
+        this.textGameOver = new game.BitmapText('GAME OVER\nPour gagner aidez-nous envoyez vos dons', {font:'25px HelveticaNeue'});
+        this.textGameOver.position.x = game.system.width/2 ;
+        this.textGameOver.position.y = game.system.width/2 ;
+        this.stage.addChild(this.textGameOver);
+        game.system.pause();
     }
 });
 
