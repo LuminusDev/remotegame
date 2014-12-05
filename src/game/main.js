@@ -13,6 +13,8 @@ game.module(
 game.createScene('Main', {
     backgroundColor: 0xeeeeee,
     obj: {},
+    menu_graphics: [],
+    menu_boutton: [],
     dataSocket: {
         accx:0,
         accy:0,
@@ -56,8 +58,43 @@ game.createScene('Main', {
         sprite.position.y = offsetCamera + 20;
         this.stage.addChild(sprite);
 
-        sprite = new game.ButtonSprite("button", offsetCamera+100, offsetCamera+100);
+        
+
+        //Ecran menu
+        var menu_boutton = {};
+        var menu_graphics = {};
+
+        sprite = new game.Graphics();
+        sprite.beginFill(0xb9bea7);
+        sprite.drawRect(offsetCamera + 200, offsetCamera + 200, 600, 300);
+        this.stage.addChild(sprite);
+        this.menu_graphics[0] = sprite;
+
+        sprite = new game.BitmapText('Ebola Game ', {font:'35px HelveticaNeue'});
+        sprite.position.x = game.system.width / 2  - sprite.width /2 + offsetCamera ;
+        sprite.position.y = game.system.height / 2 - sprite.height/2 + offsetCamera -250;
+        this.stage.addChild(sprite);
+
+        this.menu_graphics[1] = sprite;        
+
+
+
+        sprite = new game.ButtonSprite("  Jouer   ", offsetCamera+300, offsetCamera+500);
+         sprite.onReady(function (){
+            console.log("e");
+            for(var i=0;i<game.scene.menu_boutton.length;i++)
+                game.scene.menu_boutton[i].removeStage();
+            
+            for(var i=0;i<game.scene.menu_graphics.length;i++)
+                game.scene.stage.removeChild(game.scene.menu_graphics[i]);
+            
+        });
         sprite.addStage();
+        this.menu_boutton[0] = sprite;
+
+        sprite = new game.ButtonSprite(" Quitter  ", offsetCamera+550, offsetCamera+500);
+        sprite.addStage();
+        this.menu_boutton[1] = sprite;
 
         // Init world
         this.world = new game.World({gravity: [0, 5]});
@@ -97,7 +134,7 @@ game.createScene('Main', {
             game.system.width / 2 / this.world.ratio,
             0,
             game.system.width * 2 / this.world.ratio,
-            (wallSize +sn) / this.world.ratio
+            (wallSize + sn*2 +120*2 +10) / this.world.ratio
         );
         this.obj[wallClass.body.id] = wallClass;
 
