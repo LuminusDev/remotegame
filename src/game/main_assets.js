@@ -7,8 +7,8 @@ game.module(
 .body(function() {
 
 game.addAsset('doctor.png');
-game.addAsset('background.png');
-game.addAsset('panda.png');
+game.addAsset('background2.png');
+game.addAsset('logo.png');
 game.addAsset('circle.png');
 game.addAsset('circle-blue2.png');
 game.addAsset('circle-green2.png');

@@ -35,7 +35,7 @@ game.createScene('Main', {
             offsetWall = wallSize / 2;
             this.offsetCamera = offsetWall + 50; 
 
-        sprite = new game.Sprite('background.png', this.offsetCamera, this.offsetCamera);
+        sprite = new game.Sprite('background2.png', this.offsetCamera, this.offsetCamera);
         sprite.width = game.system.width;
         sprite.height = game.system.height;
         this.stage.addChild(sprite);
@@ -49,8 +49,7 @@ game.createScene('Main', {
         sprite.drawRect(this.offsetCamera,this.offsetCamera+120,game.system.width,5);
         this.stage.addChild(sprite);
 
-        sprite = new game.Sprite('panda.png', 10+this.offsetCamera, this.offsetCamera);
-
+        sprite = new game.Sprite('logo.png', 10+this.offsetCamera, this.offsetCamera);
         this.stage.addChild(sprite);     
         
 
