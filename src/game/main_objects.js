@@ -136,10 +136,6 @@ game.WallObject = game.Class.extend({
 	    this.body.gravityScale = 0;
 	    this.body.addShape(wallShape);
 	    game.scene.world.addBody(this.body);
-	    var sprite = new game.Graphics();
-        sprite.beginFill(0xb9bec7);
-        sprite.drawRect(x*game.scene.world.ratio,y*game.scene.world.ratio,w*game.scene.world.ratio,h*game.scene.world.ratio);
-        game.scene.stage.addChild(sprite);
 	},
 
 	contactBegin: function(contactObject) {},
