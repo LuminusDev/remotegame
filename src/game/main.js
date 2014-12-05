@@ -70,7 +70,15 @@ game.createScene('Main', {
 
         this.menu_graphics[1] = sprite;        
 
-
+	game.scene.addTimer(100, function(){
+	  if (game.isOver){
+	    my.textGameOver = new game.BitmapText('GAME OVER\nPour gagner aidez-nous envoyez vos dons', {font:'25px HelveticaNeue'});
+	    my.textGameOver.position.x = game.system.width/2 ;
+	      my.textGameOver.position.y = game.system.width/2 ;
+	    my.stage.addChild(my.textGameOver);
+	    game.system.pause();
+	  }
+	  },true);
        
       
         
