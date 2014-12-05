@@ -116,19 +116,14 @@ game.createScene('Main', {
         // ----------------------------------------------------------------------
 
         // Object
+	var center = new game.CenterObject(offsetCamera + 750, offsetCamera + 450);
+ 	game.scene.obj[center.body.id] = center;
+        game.scene.addObject(center);
+
 
         var doc = new game.DoctorObject(game.system.width /2 + offsetWall, game.system.height / 2 );
         game.scene.obj[doc.body.id] = doc;
         game.scene.addObject(doc);
-
- 
- 	var center = new game.CenterObject(offsetCamera + 750, offsetCamera + 450);
-// 	game.scene.obj[center.body.id] = center;
-//         game.scene.addObject(center);
-
-
-
-
 
         // var alphabet = "ARTYIPDHB";
         var alphabet = "HB";

@@ -12,8 +12,8 @@ var SCENE          = Math.pow(2,1),
 	PHONEME_THROW  = Math.pow(2,2),
 	PHONEME_INGAME = Math.pow(2,3),
 	OBSTACLE       = Math.pow(2,4),
-	ANSWER         = Math.pow(2,5);
-	PEOPLE		   = Math.pow(2,6);
+	ANSWER         = Math.pow(2,5),
+	PEOPLE		   = Math.pow(2,6),
 	CENTER		   = Math.pow(2,7);
 
 
@@ -68,7 +68,7 @@ game.DoctorObject = game.Class.extend({
 	    // Add body and shape
 	    this.shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
 	    this.shape.collisionGroup = PEOPLE;
-	    this.shape.collisionMask  = SCENE | PEOPLE;
+	    this.shape.collisionMask  = SCENE | PEOPLE | CENTER;
 	    this.body = new game.Body({
 	        mass: 1,
 	        position: [
@@ -153,20 +153,18 @@ game.WallObject = game.Class.extend({
 
 	init: function(x, y, w, h) {
 	    var wallShape = new game.Rectangle(w, h);
-	    wallShape.sensor = true;
 	    wallShape.collisionGroup = SCENE;
-	    wallShape.collisionMask  = PHONEME_THROW | PHONEME_INGAME;
+	    wallShape.collisionMask  = PEOPLE;
 	    this.body = new game.Body({
+	      	mass:1,
 	        position: [x, y]
 	    });
+	    this.body.damping = 1;
 	    this.body.addShape(wallShape);
 	    game.scene.world.addBody(this.body);
 	},
 
 	contactBegin: function(contactObject) {
-	    game.scene.obj[contactObject.id].remove();
-	    game.scene.obj[contactObject.id] = null;
-	    delete game.scene.obj[contactObject.id];
 	},
 
 	contactEnd: function(contactObject) {
@@ -550,8 +548,8 @@ game.CenterObject = game.Class.extend({
 	init: function(x, y, letter, direction) {
 	    // Add body and shape
 	    this.shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
-	    this.shape.collisionGroup = PHONEME_THROW;
-	    this.shape.collisionMask  = SCENE;
+	    this.shape.collisionGroup = CENTER;
+	    this.shape.collisionMask  = SCENE | PEOPLE;
 	    this.body = new game.Body({
 	        mass: 1,
 	        position: [
@@ -564,7 +562,9 @@ game.CenterObject = game.Class.extend({
 
 	    // Apply velocity
 	    var force = 4;
-	    var angle = 0;
+// 	    var angle = (direction == "left") ? Math.PI + Math.PI / 2 : Math.PI / 2;
+// 	    this.body.velocity[0] = Math.sin(angle) * force;
+// 	    this.body.velocity[1] = Math.cos(angle) * force;
 
 	    // Ignore gravity
 	    this.body.gravityScale = 0;
@@ -604,7 +604,6 @@ game.CenterObject = game.Class.extend({
 
 	contactBegin: function(contactObject) {
 	    if (game.scene.obj[contactObject.id].isMedic) {
-	      console.log("hgjhg");
 	        var soundName = Math.random() > 0.5 ? "popwood1" : "popwood2";
 	        game.audio.playSound(soundName);
 	    }
