@@ -102,12 +102,25 @@ game.createScene('Main', {
         this.obj[wallClass.body.id] = wallClass;
 
         // ----------------------------------------------------------------------
-        var i, sickobj;
-        for (i = 0; i < 2; i++) {
-            sickobj = new game.SickObject(game.system.width / 2 - 180 + i*100, game.system.height + 80);
+        var i, sickobj, a, b;
+        var difficult = 0;
+        for (i = 0; i < 5; i++) {
+            a = Math.floor(Math.random() * 9) + 0;
+            b = Math.floor(Math.random() * 5) + 0
+            sickobj = new game.SickObject(game.system.width /4 + a * 100, game.system.height - b*100,difficult);
             game.scene.addObject(sickobj);
             game.scene.obj[sickobj.body.id] = sickobj;
         }
+        game.scene.addTimer(3000, function(){
+                    if (difficult < 45) {
+                        difficult = difficult + 3;
+                    };
+                    a = Math.floor(Math.random() * 9) + 0;
+                    b = Math.floor(Math.random() * 5) + 0
+                    sickobj = new game.SickObject(game.system.width /4 + a * 100, game.system.height - b*100,difficult);
+                    game.scene.addObject(sickobj);
+                    game.scene.obj[sickobj.body.id] = sickobj;      
+                }, true);
         // ----------------------------------------------------------------------
 
         // Object
@@ -147,19 +160,15 @@ game.createScene('Main', {
         // Check if key is currently down
         if (game.keyboard.down('UP')) {
             this.dataSocket.accx += 0.01;            
-            console.log('up');
         }
         if (game.keyboard.down('DOWN')) {
             this.dataSocket.accx -= 0.01;
-            console.log('down');
         }
         if (game.keyboard.down('LEFT')) {
             this.dataSocket.accy -= 0.01;
-            console.log('left');
         }
         if (game.keyboard.down('RIGHT')) {
             this.dataSocket.accy += 0.01;
-            console.log('right');
         }
 
         

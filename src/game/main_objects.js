@@ -103,9 +103,7 @@ game.DoctorObject = game.Class.extend({
 	},
 
 	contactBegin: function(contactObject) {
-		console.log("that");
 	    if (game.scene.obj[contactObject.id].isSick === true) {
-	    	console.log("that2");
 	    	this.cure();
 	        game.audio.playSound("cure");
 	    }
@@ -148,7 +146,7 @@ game.SickSprite = game.Sprite.extend({
 	tween: null,
 
 	init: function(x, y, bodyAttach) {
-	    this._super("Sick_circle.png", x, y);
+	    this._super("sick_circle.png", x, y);
 	    this.attachObject = bodyAttach;
 	},
 
@@ -178,14 +176,15 @@ game.SickObject = game.Class.extend({
 	sprite: null,
 	isFind: false,
 	isSick: true,
-	life: 5,
+	life: 50,
 
-	init: function(x, y) {
+	init: function(x, y, difficult) {
+		console.log(difficult);
 	    // Add body and shape
 	    var shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
 	    shape.sensor = true;
 	    shape.collisionGroup = PEOPLE;
-	    shape.collisionMask  = PEOPLE | SCENE;
+	    shape.collisionMask  = PEOPLE | SCENE | CENTER;
 	    this.body = new game.Body({
 	        position: [
 	            x / game.scene.world.ratio,
@@ -196,11 +195,13 @@ game.SickObject = game.Class.extend({
 
 	    this.sprite = new game.SickSprite(x, y ,this);
 	    this.sprite.anchor.set(0.5, 0.5);
-
+	    this.life = this.life - difficult;
+	    if(this.life <= 4)
+	    	this.life = 5;
 	    var my = this;
 	    game.scene.addTimer(1000, function(){
                     my.life--;
-                    if(my.life==0) {
+                    if(my.life <= 0) {
                     	game.scene.removeTimer(this);
                     	my.sickDie(x,y);
                     }     	
@@ -222,6 +223,10 @@ game.SickObject = game.Class.extend({
 	        this.sickCure();
 	    }
 
+	    if (game.scene.obj[contactObject.id].isSick === true || game.scene.obj[contactObject.id].isCenter === true) {
+	        this.remove();
+	    }
+
 	    game.scene.obj[contactObject.id].cptContact += 1;
 	    game.scene.obj[contactObject.id].sickhover = this;
 
@@ -235,22 +240,36 @@ game.SickObject = game.Class.extend({
 	},
 
 	sickDie: function(x, y) {
-	    this.sprite.setTexture('skull.png');
-	    var my = this;
-	    game.scene.addTimer(1500, function(){
-    		//mettre un son
-    		game.scene.removeTimer(this);
-    		my.remove();	
-        }, false);
+		this.remove();
 		
+		if(this.isSick) {
+			var sprite = new game.Sprite('skull.png', x,y);
+        sprite.anchor.set(0.5,0.5);
+        game.scene.stage.addChild(sprite);
+    	
+		game.scene.addTimer(1500, function(){
+            		//mettre un son
+            		game.scene.removeTimer(this);
+            		game.scene.stage.removeChild(sprite);	
+                }, false);
+		}
 	},
 
 	sickCure: function() {
+		this.isSick = false;
 		this.remove();
+		var sprite = new game.Sprite('heal.png', this.body.position[0]*100,this.body.position[1]*100);
+        sprite.anchor.set(0.5,0.5);
+        game.scene.stage.addChild(sprite);
+    	
+		game.scene.addTimer(1500, function(){
+            		//mettre un son
+            		game.scene.removeTimer(this);
+            		game.scene.stage.removeChild(sprite);	
+                }, false);
 	}
 
 });
-
 
 game.ButtonSprite = game.Class.extend({
 	spriteInButton: null,

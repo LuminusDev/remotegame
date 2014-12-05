@@ -13,8 +13,9 @@ game.addAsset('circle.png');
 game.addAsset('circle-blue2.png');
 game.addAsset('circle-green2.png');
 game.addAsset('best.png');
-game.addAsset('Sick_circle.png');
+game.addAsset('sick_circle.png');
 game.addAsset('skull.png');
+game.addAsset('heal.png')
 game.addAsset('icons/heart.png');
 game.addAsset('center.png');
 
