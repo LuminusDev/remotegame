@@ -44,7 +44,6 @@ game.DoctorObject = game.Class.extend({
 	shape: null,
 	current_medic: 100,
 	max_medic: 100,
-	points: 0,
 
 	init: function(x, y, direction) {
 	    // Add body and shape
@@ -107,8 +106,6 @@ game.DoctorObject = game.Class.extend({
 	    if (game.scene.obj[contactObject.id].isSick === true) {
 	    	this.cure();
 	        game.audio.playSound("cure");
-	        this.points += game.scene.obj[contactObject.id].difficult + 1;
-	        console.log(points);
 	    }
 
 	    if (game.scene.obj[contactObject.id].isCenter === true) {
@@ -180,9 +177,9 @@ game.SickObject = game.Class.extend({
 	isFind: false,
 	isSick: true,
 	life: 50,
+	difficult: 0,
 
 	init: function(x, y, difficult) {
-		console.log(difficult);
 	    // Add body and shape
 	    var shape = new game.Circle(this.size / 2 / game.scene.world.ratio);
 	    shape.sensor = true;
@@ -202,6 +199,7 @@ game.SickObject = game.Class.extend({
 	    if(this.life <= 4)
 	    	this.life = 5;
 	    var my = this;
+	    this.difficult = difficult;
 	    game.scene.addTimer(1000, function(){
                     my.life--;
                     if(my.life <= 0) {
@@ -259,6 +257,7 @@ game.SickObject = game.Class.extend({
 	},
 
 	sickCure: function() {
+		game.scene.points += this.difficult +1;
 		this.isSick = false;
 		this.remove();
 		var sprite = new game.Sprite('heal.png', this.body.position[0]*100,this.body.position[1]*100);
@@ -487,7 +486,6 @@ game.CenterObject = game.Class.extend({
 		var me = this;
 		game.scene.addTimer(time,function(){
 			me.medoc = 100;	
-			console.log("jkhjk");
 		},false);
 	        var soundName = Math.random() > 0.5 ? "popwood1" : "popwood2";
 	        game.audio.playSound(soundName);

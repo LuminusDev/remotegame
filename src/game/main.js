@@ -14,6 +14,8 @@ game.createScene('Main', {
     backgroundColor: 0xeeeeee,
     obj: {},
     menu_graphics: [],
+    points: 0,
+    textPoints: null,
     dataSocket: {
         accx:0,
         accy:0,
@@ -45,17 +47,19 @@ game.createScene('Main', {
         sprite = new game.Sprite('panda.png', 10+offsetCamera, offsetCamera);
         this.stage.addChild(sprite);
 
-        sprite = new game.Sprite('icons/heart.png');
-        sprite.width = 150;
-        sprite.height = 150;
-        sprite.position.x = game.system.width - sprite.width - 10 + offsetCamera;
-        sprite.position.y = offsetCamera;
-        this.stage.addChild(sprite);
+        this.textPoints = new game.BitmapText('Points :' + game.scene.points, {font:'25px HelveticaNeue'});
+        this.textPoints.position.x = offsetCamera + 200;
+        this.textPoints.position.y = offsetCamera + 20;
+        this.stage.addChild(this.textPoints);
 
-        sprite = new game.BitmapText('We wish this event on this special day', {font:'25px HelveticaNeue'});
-        sprite.position.x = offsetCamera + 200;
-        sprite.position.y = offsetCamera + 20;
-        this.stage.addChild(sprite);
+        var my = this
+        game.scene.addTimer(100, function(){
+                    my.stage.removeChild(my.textPoints);
+                    my.textPoints = new game.BitmapText('Points :' + game.scene.points, {font:'25px HelveticaNeue'});
+                    my.textPoints.position.x = offsetCamera + 200;
+                    my.textPoints.position.y = offsetCamera + 20;
+                    my.stage.addChild(my.textPoints);        
+                }, true);
 
         
 
