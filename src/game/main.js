@@ -64,7 +64,7 @@ game.createScene('Main', {
                 }, true);
 
         
-
+        
         //Ecran menu
         var menu_graphics = {};
 

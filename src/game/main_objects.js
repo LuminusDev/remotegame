@@ -42,8 +42,8 @@ game.DoctorObject = game.Class.extend({
 	sprite: null,
 	isMedic: true,
 	shape: null,
-	current_medic: 100,
-	max_medic: 100,
+	current_medic: 20,
+	max_medic: 20,
 
 	init: function(x, y, direction) {
 	    // Add body and shape
@@ -104,8 +104,12 @@ game.DoctorObject = game.Class.extend({
 
 	contactBegin: function(contactObject) {
 	    if (game.scene.obj[contactObject.id].isSick === true) {
-	    	this.cure();
-	        game.audio.playSound("cure");
+	    	console.log(this.current_medic);
+	    	if(this.current_medic >= 10){
+	    		this.cure();
+	    		game.scene.obj[contactObject.id].sickCure();
+	        	game.audio.playSound("cure");
+	        }
 	    }
 
 	    if (game.scene.obj[contactObject.id].isCenter === true) {
@@ -220,20 +224,9 @@ game.SickObject = game.Class.extend({
 	},
 
 	contactBegin: function(contactObject) {
-	    if (game.scene.obj[contactObject.id].isMedic === true) {
-	        this.sickCure();
-	    }
-
 	    if (game.scene.obj[contactObject.id].isSick === true || game.scene.obj[contactObject.id].isCenter === true) {
 	        this.remove();
 	    }
-
-	    game.scene.obj[contactObject.id].cptContact += 1;
-	    game.scene.obj[contactObject.id].sickhover = this;
-
-	    this.sprite.scale.x = 1.3;
-	    this.sprite.scale.y = 1.3;
-	    this.sprite.alpha = 0.8;
 	},
 
 	contactEnd: function(contactObject) {
