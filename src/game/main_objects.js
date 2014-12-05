@@ -42,8 +42,8 @@ game.DoctorObject = game.Class.extend({
 	sprite: null,
 	isMedic: true,
 	shape: null,
-	current_medic: 20,
-	max_medic: 20,
+	current_medic: 100,
+	max_medic: 100,
 
 	init: function(x, y, direction) {
 	    // Add body and shape
@@ -482,13 +482,14 @@ game.CenterObject = game.Class.extend({
 	    if (game.scene.obj[contactObject.id].isMedic && this.medoc !== 0) {
 	      	this.medoc = 0;
 	      	this.sprite.shake(time);
-		var me = this;
-		game.scene.addTimer(time,function(){
-			me.medoc = 100;	
-		},false);
-	        var soundName = Math.random() > 0.5 ? "popwood1" : "popwood2";
-	        game.audio.playSound(soundName);
-	    }
+			var me = this;
+			game.scene.addTimer(time,function(){
+				me.medoc = 100;	
+			},false);
+		        var soundName = Math.random() > 0.5 ? "popwood1" : "popwood2";
+		        game.audio.playSound(soundName);
+		}
+		
 	},
 
 	contactEnd: function(contactObject) {

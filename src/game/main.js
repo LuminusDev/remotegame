@@ -93,11 +93,13 @@ game.createScene('Main', {
         var my = this
         game.scene.addTimer(100, function(){
                     my.stage.removeChild(my.textPoints);
-                    my.textPoints = new game.BitmapText('Points :' + game.scene.points+'       Vies sauvees :'+game.scene.SavePeople+'        Medicaments :'+my.doc.current_medic, {font:'25px HelveticaNeue'});
+                    my.textPoints = new game.BitmapText('Points :' + game.scene.points+'       Vies sauvees :'+game.scene.SavePeople+'        Medicaments :'+my.doc.current_medic + ' / ' + my.doc.max_medic + '\nVies restantes: ' + my.remaining_life, {font:'25px HelveticaNeue'});
                     my.textPoints.position.x = my.offsetCamera + 200;
                     my.textPoints.position.y = my.offsetCamera + 20;
                     my.stage.addChild(my.textPoints);        
                 }, true);
+
+
 
         // Add walls
         //left
